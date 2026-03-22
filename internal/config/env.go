@@ -3,7 +3,11 @@
 // All Conduit configuration from environment variables. No config files.
 package config
 
-import "os"
+import (
+	"os"
+
+	canonid "github.com/Harshmaury/Canon/identity"
+)
 
 // Config holds all Conduit runtime configuration.
 type Config struct {
@@ -37,8 +41,8 @@ func Load() *Config {
 	return &Config{
 		HTTPAddr:        envOr("CONDUIT_HTTP_ADDR", DefaultHTTPAddr),
 		StreamAddr:      envOr("CONDUIT_STREAM_ADDR", DefaultStreamAddr),
-		NexusAddr:       envOr("NEXUS_ADDR", DefaultNexusAddr),
-		GateAddr:        envOr("GATE_ADDR", DefaultGateAddr),
+		NexusAddr:       envOr("NEXUS_ADDR", canonid.DefaultNexusAddr),
+		GateAddr:        envOr("GATE_ADDR", canonid.DefaultGateAddr),
 		ServiceToken:    os.Getenv("CONDUIT_SERVICE_TOKEN"),
 		RequireIdentity: os.Getenv("CONDUIT_REQUIRE_IDENTITY") != "false", // default true
 	}

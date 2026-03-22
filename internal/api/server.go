@@ -3,6 +3,7 @@
 package api
 
 import (
+	canonid "github.com/Harshmaury/Canon/identity"
 	"net/http"
 
 	"github.com/Harshmaury/Conduit/internal/api/handler"
@@ -28,7 +29,7 @@ func NewServer(reg *session.Registry, cfg *config.Config) *http.Server {
 // serviceAuthMiddleware enforces X-Service-Token on protected endpoints (ADR-008).
 func serviceAuthMiddleware(token string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if token != "" && r.Header.Get(config.ServiceTokenHeader) != token {
+		if token != "" && r.Header.Get(canonid.ServiceTokenHeader) != token {
 			http.Error(w, `{"ok":false,"error":"UNAUTHORIZED"}`, http.StatusUnauthorized)
 			return
 		}

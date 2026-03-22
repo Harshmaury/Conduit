@@ -1,3 +1,6 @@
+// DEPRECATED: replaced by github.com/Harshmaury/Canon v1.0.0 imports.
+// This file will be deleted after go mod tidy confirms Canon is in go.sum.
+// Do not add new constants here — use Canon directly.
 // @conduit-project: conduit
 // @conduit-path: internal/config/canon.go
 // Canon constants mirrored for Conduit until go get Canon@v1.0.0 runs.
