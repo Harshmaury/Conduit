@@ -1,0 +1,10 @@
+id: conduit
+name: Conduit
+role: control
+version: v0.1.0
+description: Remote agent bridge — authenticated remote engxa sessions (ADR-042)
+runtime:
+  binary: conduit
+  ports:
+    - 9092
+    - 9093
