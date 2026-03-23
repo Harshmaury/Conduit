@@ -6,6 +6,7 @@
 package auth
 
 import (
+	canonid "github.com/Harshmaury/Canon/identity"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -62,7 +63,7 @@ func (v *Validator) Validate(identityToken string) (*Claim, error) {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	if v.serviceToken != "" {
-		req.Header.Set("X-Service-Token", v.serviceToken)
+		req.Header.Set(canonid.ServiceTokenHeader, v.serviceToken) // ADR-016: Canon constant only
 	}
 	resp, err := v.client.Do(req)
 	if err != nil {
