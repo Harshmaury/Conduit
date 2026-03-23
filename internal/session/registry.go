@@ -7,6 +7,8 @@
 package session
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"net"
 	"sync"
@@ -104,7 +106,25 @@ func (r *Registry) Touch(id string) {
 	}
 }
 
-// NewSessionID generates a unique session ID.
-func NewSessionID() string {
-	return fmt.Sprintf("csn_%x", time.Now().UnixNano())
+// NewSessionID generates a cryptographically random session ID.
+// Format: csn_<32 hex chars> — 128 bits of entropy, non-enumerable.
+// Returns an error only if the system random source is unavailable (extremely rare).
+// Pattern mirrors gate/internal/identity/token.go newJTI().
+func NewSessionID() (string, error) {
+	var b [16]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		return "", fmt.Errorf("generate session id: %w", err)
+	}
+	return "csn_" + hex.EncodeToString(b[:]), nil
+}
+
+// mustNewSessionID calls NewSessionID and panics on failure.
+// Use only in contexts where random source unavailability is fatal
+// (e.g., service startup). For connection handlers, use NewSessionID directly.
+func mustNewSessionID() string {
+	id, err := NewSessionID()
+	if err != nil {
+		panic("engx: session ID generation failed: " + err.Error())
+	}
+	return id
 }

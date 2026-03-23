@@ -85,7 +85,11 @@ func (h *Handler) Handle(conn net.Conn) {
 		}
 	}
 
-	sessionID := session.NewSessionID()
+	sessionID, err := session.NewSessionID()
+	if err != nil {
+		sendError(conn, fmt.Sprintf("session ID generation failed: %v", err))
+		return
+	}
 	s := &session.Session{
 		ID:          sessionID,
 		AgentID:     req.AgentID,
