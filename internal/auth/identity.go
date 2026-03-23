@@ -3,6 +3,9 @@
 // Package auth validates Gate identity tokens for remote agent sessions.
 // ADR-042: Conduit is a remote boundary — identity validation is mandatory.
 // All remote sessions must present a valid Gate token with scope "execute".
+//
+// IdentityClaimDTO field names and json tags mirror accord.IdentityClaimDTO exactly.
+// When Accord is added to conduit/go.mod, replace this local type with a direct import.
 package auth
 
 import (
@@ -14,8 +17,10 @@ import (
 	"time"
 )
 
-// Claim is the validated Gate identity attached to every Conduit session.
-type Claim struct {
+// IdentityClaimDTO is the validated Gate identity attached to every Conduit session.
+// Field names and json tags are identical to accord.IdentityClaimDTO (Accord v0.1.2).
+// When Accord is added to go.mod, replace this type with: accord.IdentityClaimDTO.
+type IdentityClaimDTO struct {
 	Subject   string   `json:"sub"`
 	Scopes    []string `json:"scp"`
 	ExpiresAt int64    `json:"exp"`
@@ -23,7 +28,7 @@ type Claim struct {
 }
 
 // HasScope returns true if the claim contains the given scope.
-func (c *Claim) HasScope(scope string) bool {
+func (c *IdentityClaimDTO) HasScope(scope string) bool {
 	for _, s := range c.Scopes {
 		if s == scope {
 			return true
@@ -48,10 +53,10 @@ func NewValidator(gateAddr, serviceToken string) *Validator {
 	}
 }
 
-// Validate calls Gate and returns the validated Claim.
+// Validate calls Gate and returns the validated IdentityClaimDTO.
 // Returns error if the token is invalid, expired, or revoked.
 // Returns (nil, nil) if token is empty — callers decide if anonymous is allowed.
-func (v *Validator) Validate(identityToken string) (*Claim, error) {
+func (v *Validator) Validate(identityToken string) (*IdentityClaimDTO, error) {
 	if identityToken == "" {
 		return nil, nil
 	}
@@ -72,9 +77,9 @@ func (v *Validator) Validate(identityToken string) (*Claim, error) {
 	defer resp.Body.Close()
 
 	var result struct {
-		Valid  bool   `json:"valid"`
-		Claim  *Claim `json:"claim,omitempty"`
-		Reason string `json:"reason,omitempty"`
+		Valid  bool              `json:"valid"`
+		Claim  *IdentityClaimDTO `json:"claim,omitempty"`
+		Reason string            `json:"reason,omitempty"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("gate validate decode: %w", err)

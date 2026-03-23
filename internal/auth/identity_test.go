@@ -4,8 +4,8 @@ package auth
 
 import "testing"
 
-func TestClaim_HasScope(t *testing.T) {
-	c := &Claim{Scopes: []string{"execute", "observe"}}
+func TestIdentityClaimDTO_HasScope(t *testing.T) {
+	c := &IdentityClaimDTO{Scopes: []string{"execute", "observe"}}
 	if !c.HasScope("execute") {
 		t.Error("expected execute")
 	}
