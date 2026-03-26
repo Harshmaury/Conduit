@@ -1,10 +1,19 @@
+name: conduit
 id: conduit
-name: Conduit
-role: control
-version: v0.1.0
-description: Remote agent bridge — authenticated remote engxa sessions (ADR-042)
+type: web-api
+language: go
+version: 0.1.0
+keywords:
+  - conduit
+  - remote-agent
+  - tunnel
+capabilities:
+  - remote-agent-bridge
+  - session-management
+depends_on:
+  - gate
 runtime:
-  binary: conduit
-  ports:
-    - 9092
-    - 9093
+  provider: process
+  port: 9092
+  command: /home/harsh/bin/conduit
+  dir: /home/harsh/workspace/projects/engx/services/conduit
